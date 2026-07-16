@@ -21,6 +21,89 @@
 
         <link rel="stylesheet" href="index.css"/>
 
+        <!-- META PIXEL — Core (va PRIMERO, define las funciones) -->
+        <script>
+            const MM_CONFIG = {
+                pixelId: "1213559877562939",
+                workerUrl: "https://maestros-capi-worker.mentesmaestrasdigital.workers.dev",
+                debug: false,
+            };
+
+            window.__MM_eventId = function (eventName) {
+                return `${eventName}_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+            };
+
+            function getCookie(name) {
+                const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
+                return match ? decodeURIComponent(match[2]) : "";
+            }
+
+            window.__MM_sendCAPI = async function (eventName, eventId, customData = {}) {
+                try {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const fbclid = urlParams.get("fbclid");
+                    if (fbclid) {
+                        document.cookie = `_fbc=fb.1.${Date.now()}.${fbclid};path=/;max-age=7776000`;
+                    }
+                    await fetch(MM_CONFIG.workerUrl, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            event_name: eventName,
+                            event_id: eventId,
+                            event_data: {
+                                page_url: window.location.href,
+                                fbc: getCookie("_fbc"),
+                                fbp: getCookie("_fbp"),
+                                custom_data: customData,
+                            },
+                        }),
+                    });
+                    if (MM_CONFIG.debug) console.log(`[MM CAPI] ✅ ${eventName}`, eventId);
+                } catch (e) {
+                    if (MM_CONFIG.debug) console.warn(`[MM CAPI] ❌ ${eventName}`, e);
+                }
+            };
+
+            window.__MM_track = function (eventName, data = {}) {
+                const eventId = window.__MM_eventId(eventName);
+                fbq("track", eventName, data, { eventID: eventId });
+                window.__MM_sendCAPI(eventName, eventId, data);
+                if (MM_CONFIG.debug) console.log(`[MM Pixel] 🔵 ${eventName}`, data);
+            };
+        </script>
+
+        <!-- META PIXEL — Base (va SEGUNDO, ahora __MM_eventId ya existe) -->
+        <script>
+            !(function (f, b, e, v, n, t, s) {
+                if (f.fbq) return;
+                n = f.fbq = function () {
+                    n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+                };
+                if (!f._fbq) f._fbq = n;
+                n.push = n;
+                n.loaded = !0;
+                n.version = "2.0";
+                n.queue = [];
+                t = b.createElement(e);
+                t.async = !0;
+                t.src = v;
+                s = b.getElementsByTagName(e)[0];
+                s.parentNode.insertBefore(t, s);
+            })(window, document, "script", "https://connect.facebook.net/en_US/fbevents.js");
+            fbq("init", "1213559877562939");
+
+            const pageViewEventId = window.__MM_eventId("PageView");
+            fbq("track", "PageView", {}, { eventID: pageViewEventId });
+
+            document.addEventListener("DOMContentLoaded", function () {
+                window.__MM_sendCAPI("PageView", pageViewEventId);
+            });
+        </script>
+        <noscript>
+            <img height="1" width="1" style="display: none" src="https://www.facebook.com/tr?id=1213559877562939&ev=PageView&noscript=1" />
+        </noscript>
+
     </head>
     <body>
 
@@ -905,5 +988,7 @@
         </footer>
 
         <script src="js/main.js" defer></script>
+        <script src="js/tracking.js" defer></script>
     </body>
 </html>
+
