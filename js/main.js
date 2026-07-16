@@ -227,12 +227,6 @@ function initCounters() {
 
     /* ======================================================
     BLOQUE 3 — ANIMACIONES DE ENTRADA
-    Optimizado: micro-stagger real entre tarjetas que entran
-    juntas (misma fila / mismo scroll), con tope y reinicio
-    automático para no acumular retraso entre grupos distintos.
-    El costo de blur ya no se anima aquí (se movió fuera del
-    CSS de transición): solo transform + opacity, que el
-    navegador puede componer en la GPU sin repintar.
     ====================================================== */
 function initRevealCards() {
     const cards = document.querySelectorAll(".reveal-card");
