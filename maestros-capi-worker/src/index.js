@@ -4,7 +4,7 @@
 // ============================================================
 
 const PIXEL_ID = '1213559877562939';
-const META_CAPI_URL = `https://graph.facebook.com/v19.0/${PIXEL_ID}/events`;
+const META_CAPI_URL = `https://graph.facebook.com/v22.0/${PIXEL_ID}/events`;
 
 const ALLOWED_ORIGINS = [
 	'https://maestros-del-negocio.mentesmaestrasdigital.workers.dev',
